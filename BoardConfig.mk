@@ -55,7 +55,6 @@ TARGET_PREBUILT_DTB := device/vivo/PD1936/prebuilt/dtb.img
 # Kernel modules (for early mount)
 BOARD_VENDOR_KERNEL_MODULES := \
     $(wildcard device/vivo/PD1936/proprietary/lib/modules/*.ko)
-
 # Filesystem
 TARGET_USERIMAGES_USE_F2FS := true
 TARGET_USERIMAGES_USE_EXT4 := true
@@ -64,6 +63,10 @@ BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := ext4
+
+# Vendor output path - required for vendor image
+TARGET_COPY_OUT_VENDOR := vendor
+
 
 # Partition sizes (based on actual image sizes and common partitions)
 BOARD_BOOTIMAGE_PARTITION_SIZE := 100663296
