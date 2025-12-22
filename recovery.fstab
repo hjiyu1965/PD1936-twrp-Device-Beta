@@ -1,0 +1,59 @@
+# Copyright (C) 2025 The TWRP Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Android fstab file for PD1936 (vivo V1936A)
+# Based on vendor/etc/fstab.qcom
+# Adapted for TWRP 11 recovery
+
+#<src>                                                 <mnt_point>            <type>  <mnt_flags and options>                            <fs_mgr_flags>
+# System partition (read-only in recovery)
+/dev/block/bootdevice/by-name/system                   /system                 ext4    ro,barrier=1,discard                                 wait,avb
+
+# Metadata and data partitions
+/dev/block/bootdevice/by-name/metadata                 /metadata               ext4    noatime,nosuid,nodev,discard                         wait,check,formattable
+/dev/block/bootdevice/by-name/userdata                 /data                   f2fs    noatime,nosuid,nodev,discard,reserve_root=32768,resgid=1065,fsync_mode=nobarrier,inlinecrypt    latemount,wait,resize,check,formattable,fileencryption=ice,wrappedkey,reservedsize=128M,quota,checkpoint=fs
+/dev/block/bootdevice/by-name/cache                    /cache                  ext4    noatime,nosuid,nodev,barrier=1                       wait
+
+# Vendor dynamic partitions (mount as read-only in recovery)
+/dev/block/bootdevice/by-name/vendor                  /vendor                 ext4    ro,nosuid,nodev,barrier=1                            wait
+/dev/block/bootdevice/by-name/product                 /product                ext4    ro,nosuid,nodev,barrier=1                            wait
+/dev/block/bootdevice/by-name/odm                     /odm                    ext4    ro,nosuid,nodev,barrier=1                            wait
+
+# Persist partition
+/dev/block/bootdevice/by-name/persist                  /mnt/vendor/persist     ext4    noatime,nosuid,nodev,barrier=1                       wait,check
+
+# Firmware partitions (read-only)
+/dev/block/bootdevice/by-name/modem                    /vendor/firmware_mnt    vfat    ro,shortname=lower,uid=0,gid=1000,dmask=227,fmask=337,context=u:object_r:firmware_file:s0 wait
+/dev/block/bootdevice/by-name/dsp                      /vendor/dsp             ext4    ro,nosuid,nodev,barrier=1                            wait
+/dev/block/bootdevice/by-name/bluetooth                /vendor/bt_firmware     vfat    ro,shortname=lower,uid=1002,gid=3002,dmask=227,fmask=337,context=u:object_r:bt_firmware_file:s0 wait
+
+# Boot and recovery partitions
+/dev/block/bootdevice/by-name/misc                     /misc                   emmc    defaults                                             defaults
+/dev/block/bootdevice/by-name/boot                     /boot                   emmc    defaults                                             defaults
+/dev/block/bootdevice/by-name/vbmeta                   /vbmeta                 emmc    defaults                                             defaults
+/dev/block/bootdevice/by-name/recovery                 /recovery               emmc    defaults                                             defaults
+/dev/block/bootdevice/by-name/dtbo                     /dtbo                   emmc    defaults                                             defaults
+
+# Internal storage (mounted via data partition)
+/dev/block/bootdevice/by-name/userdata                 /sdcard                 f2fs    noatime,nosuid,nodev,discard,reserve_root=32768,resgid=1065,fsync_mode=nobarrier,inlinecrypt    latemount,wait,resize,check,formattable,fileencryption=ice,wrappedkey,reservedsize=128M,quota,checkpoint=fs
+
+# SD card (external storage)
+/devices/platform/soc/8804000.sdhci/mmc_host*          /external_sd            vfat    nosuid,nodev,uid=1023,gid=1023,fmask=0007,dmask=0007,allow_utime=0020,utf8    wait,voldmanaged=sdcard1:auto,encryptable=userdata
+/devices/platform/soc/1da4000.ufshc_card/host*         /external_sd            vfat    nosuid,nodev,uid=1023,gid=1023,fmask=0007,dmask=0007,allow_utime=0020,utf8    wait,voldmanaged=sdcard1:auto,encryptable=userdata
+
+# USB OTG
+/devices/platform/soc/*.ssusb/*.dwc3/xhci-hcd.*.auto*  /usb-otg                vfat    nosuid,nodev,uid=1023,gid=1023,fmask=0007,dmask=0007,allow_utime=0020,utf8    wait,voldmanaged=usbotg:auto,encryptable=userdata
+
+# TWRP specific mount points
+# /tmp is auto-created by TWRP, no need to define here

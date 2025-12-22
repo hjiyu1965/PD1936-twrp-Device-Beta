@@ -1,0 +1,138 @@
+/*
+ * Copyright (C) 2025 The TWRP Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/dts-v1/;
+
+/* Memory reservation for TWRP */
+/memreserve/ 0x80000000 0x40000000; /* 1GB for kernel and ramdisk */
+
+/ {
+    model = "vivo PD1936";
+    compatible = "vivo,PD1936", "qcom,msmnile", "qcom,sdm855";
+    qcom,msm-id = <0x150 0x20000>; /* SM8150 */
+    qcom,board-id = <0x1000b 0x00>;
+
+    chosen {
+        bootargs = "console= earlycon= androidboot.hardware=qcom androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 swiotlb=2048 loop.max_part=7 androidboot.usbcontroller=a600000.dwc3 product.version=PD1936_A_9.15.14 fingerprint.abbr=11/RP1A.200720.012 region_ver=W10 buildvariant=user androidboot.securebootkeyhash=2c0a52ffbd8db687b56f6a98d8840f46597a4dde6d9dc8d00039873ce6d74f60 androidboot.securebootkeyver=4";
+        linux,initrd-start = <0x84000000>;
+        linux,initrd-end = <0x86000000>;
+    };
+
+    /* Key partitions for recovery */
+    partitions {
+        compatible = "fixed-partitions";
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        /* Boot partition */
+        boot@0 {
+            label = "boot";
+            reg = <0x0 0x6000000>;
+        };
+
+        /* Recovery partition */
+        recovery@6000000 {
+            label = "recovery";
+            reg = <0x6000000 0x6000000>;
+        };
+
+        /* System partition */
+        system@c000000 {
+            label = "system";
+            reg = <0xc000000 0xe0000000>;
+        };
+
+        /* Vendor partition */
+        vendor@ec000000 {
+            label = "vendor";
+            reg = <0xec000000 0x50000000>;
+        };
+
+        /* Userdata partition */
+        userdata@13c000000 {
+            label = "userdata";
+            reg = <0x13c000000 0x1ac000000>;
+        };
+    };
+
+    /* UFS storage */
+    ufshc: ufshc@1d84000 {
+        compatible = "qcom,ufshc";
+        reg = <0x1d84000 0x3000>;
+        status = "okay";
+    };
+
+    /* USB controller */
+    usb: usb@a600000 {
+        compatible = "qcom,dwc3";
+        reg = <0xa600000 0x10000>;
+        dr_mode = "otg";
+        status = "okay";
+    };
+
+    /* Display */
+    display: display@9c0000 {
+        compatible = "qcom,msmnile-dsi-panel";
+        reg = <0x9c0000 0x1000>;
+        status = "okay";
+    };
+
+    /* Power supply */
+    battery: battery {
+        compatible = "simple-battery";
+        voltage-min-design-microvolt = <3400000>;
+        voltage-max-design-microvolt = <4400000>;
+        energy-full-design-microwatt-hours = <15000000>;
+    };
+};
+
+/* Include the base msmnile platform */
+#include "msmnile.dtsi"
+
+/* Device-specific overrides */
+&soc {
+    /* Add device-specific nodes here */
+};
+
+&qupv3_se0_i2c {
+    status = "okay";
+
+    /* Touchscreen */
+    touchscreen@38 {
+        compatible = "focaltech,fts";
+        reg = <0x38>;
+        interrupt-parent = <&tlmm>;
+        interrupts = <0x0 0x2002>;
+    };
+};
+
+&tlmm {
+    /* GPIO configurations */
+};
+
+&adreno_gpu {
+    status = "okay";
+};
+
+&qcom_seecom {
+    status = "okay";
+};
+
+&pm8150_l18 {
+    regulator-min-microvolt = <1800000>;
+    regulator-max-microvolt = <1800000>;
+    regulator-always-on;
+};
