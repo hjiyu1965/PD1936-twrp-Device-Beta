@@ -66,7 +66,7 @@ BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Vendor output path - required for vendor image
 TARGET_COPY_OUT_VENDOR := vendor
-
+      TARGET_COPY_OUT_PRODUCT := product
 
 # Partition sizes (based on actual image sizes and common partitions)
 BOARD_BOOTIMAGE_PARTITION_SIZE := 100663296
