@@ -34,6 +34,9 @@ TARGET_NO_BOOTLOADER := true
 
 # Display
 TARGET_SCREEN_DENSITY := 480
+TARGET_SCREEN_BITS_PER_PIXEL := 32
+TARGET_USES_ION := true
+TARGET_USES_NEW_ION_API := true
 
 # Kernel
 BOARD_BOOTIMG_HEADER_VERSION := 2
@@ -45,22 +48,13 @@ BOARD_KERNEL_TAGS_OFFSET := 0x00000100
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
-BOARD_KERNEL_IMAGE_NAME := Image
-BOARD_INCLUDE_DTB_IN_BOOTIMG := true
-BOARD_KERNEL_SEPARATED_DTBO := true
-TARGET_KERNEL_CONFIG := PD1936_defconfig
-TARGET_KERNEL_SOURCE := kernel/vivo/PD1936
 
-# Kernel - prebuilt
+# Use prebuilt kernel and DTB for faster compilation
 TARGET_FORCE_PREBUILT_KERNEL := true
-ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
-TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
+TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/optimized_dtb.img
 BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
-BOARD_INCLUDE_DTB_IN_BOOTIMG := 
 BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
-BOARD_KERNEL_SEPARATED_DTBO := 
-endif
 
 # Partitions
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
@@ -98,13 +92,6 @@ PLATFORM_SECURITY_PATCH := 2099-12-31
 VENDOR_SECURITY_PATCH := 2099-12-31
 PLATFORM_VERSION := 16.1.0
 
-# TWRP Configuration
-TW_THEME := portrait_hdpi
-TW_EXTRA_LANGUAGES := true
-TW_SCREEN_BLANK_ON_BOOT := true
-TW_INPUT_BLACKLIST := "hbtp_vm"
-TW_USE_TOOLBOX := true
-
 # Touchscreen Configuration
 TARGET_USES_MAX_TOUCH_POINTS := 10
 TARGET_TOUCHSCREEN_DRIVER := bbk
@@ -126,9 +113,34 @@ TW_EXTRA_LANGUAGES := true
 TW_SCREEN_BLANK_ON_BOOT := true
 TW_DEFAULT_BRIGHTNESS := 120
 TW_BRIGHTNESS_PATH := /sys/class/backlight/panel0-backlight/brightness
+TW_USE_TOOLBOX := true
+
+# Hardware compatibility for Android 11
+TARGET_SUPPORTS_PREBUILT_VENDOR_DLKM := true
+TARGET_ODM_PRODUCT := vendor
+TARGET_USES_MKE2FS := true
+TW_OZIP_DECRYPT := true
+TW_INCLUDE_RESETPROP := true
+TW_INCLUDE_REPACKTOOLS := true
+
+# USB configuration for fastboot and ADB
+TW_HAS_NO_RECOVERY_PARTITION := false
+TW_HAS_NO_DATA_PARTITION := false
+TW_HAS_MTP := true
+TW_EXCLUDE_DEFAULT_USB_INIT := false
+TW_HAS_USB_HID_SUPPORT := true
 
 # USB Configuration
 TW_USB_RECOVERY := true
 TW_USB_FUNCTIONS := "adb"
 TW_USB_CDCACM_GADGET := true
 TW_USB_ECM_GADGET := false
+
+# Battery configuration
+TW_BATTERY_DEVICE := /dev/qg_battery
+TW_BATTERY_STATUS := /sys/class/power_supply/battery/status
+TW_BATTERY_CAPACITY := /sys/class/power_supply/battery/capacity
+TW_BATTERY_VOLTAGE := /sys/class/power_supply/battery/voltage_now
+TW_BATTERY_CURRENT := /sys/class/power_supply/battery/current_now
+TW_BATTERY_HEALTH := /sys/class/power_supply/battery/health
+TW_BATTERY_TEMPERATURE := /sys/class/power_supply/battery/temp

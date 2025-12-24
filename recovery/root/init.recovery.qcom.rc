@@ -28,6 +28,10 @@
 on init
     write /sys/class/backlight/panel0-backlight/brightness 200
     setprop sys.usb.configfs 1
+    chmod 0666 /dev/input/event0
+    chown system input /dev/input/event0
+    setprop ro.hardware.touch bbk
+    setprop ro.vendor.hardware.touch bbk
 
 on property:ro.boot.usbcontroller=*
     setprop sys.usb.controller ${ro.boot.usbcontroller}

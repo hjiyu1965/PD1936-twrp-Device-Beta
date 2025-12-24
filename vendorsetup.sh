@@ -5,4 +5,4 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-export ALLOW_MISSING_DEPENDENCIES=true
+aexport ALLOW_MISSING_DEPENDENCIES=true
